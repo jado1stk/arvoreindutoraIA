@@ -1,0 +1,6 @@
+teste 1 -> 4 Vs 2Fs
+teste 2 -> 5 Vs 1F
+teste 3 -> 2 Vs 4Fs
+teste 4 -> 6 Vs
+teste 5 -> 3 Vs e Fs
+teste 6 -> 1V e 5Fs

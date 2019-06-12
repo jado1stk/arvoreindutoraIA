@@ -1,0 +1,271 @@
+package projetoia2;
+
+import com.sun.org.apache.xpath.internal.operations.Variable;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ProjetoIA2 {
+
+    public static int countWords(String s){
+
+        int wordCount = 0;
+
+        boolean word = false;
+        int endOfLine = s.length() - 1;
+
+        for (int i = 0; i < s.length(); i++) {
+            // if the char is a letter, word = true.
+            if (Character.isLetter(s.charAt(i)) || Character.isDigit(s.charAt(i)) && i != endOfLine) {
+                word = true;
+                // if char isn't a letter and there have been letters before,
+                // counter goes up.
+            } else if (!Character.isLetter(s.charAt(i)) || Character.isDigit(s.charAt(i)) && word) {
+                wordCount++;
+                word = false;
+                // last word of String; if it doesn't end with a non letter, it
+                // wouldn't count without this.
+            } else if (Character.isLetter(s.charAt(i)) || Character.isDigit(s.charAt(i)) && i == endOfLine) {
+                wordCount++;
+            }
+        }
+        return wordCount;
+    }
+    
+    public double calculoImpureza(double qtd0, double qtd1, int opcao)
+    {
+        
+        return 0;
+    }
+    
+    /**
+     * @param args the command line arguments
+     * @throws java.io.IOException
+     */
+    public static void main(String[] args) throws IOException {
+
+
+        //The text file location of your choice
+        String nomeArquivo = args[0];
+        String saida0 = args[1]; 
+        String saida1 = args[2]; 
+        String atributo = args[3]; 
+        Integer tipoImpureza = Integer.parseInt(args[4]);
+        List<String> lista = new ArrayList<>();
+        FileReader fileReader = new FileReader(nomeArquivo);
+        int contador = 0;
+
+        try (BufferedReader bufferedReader = new BufferedReader(fileReader))
+        {
+            List<String> linhas = new ArrayList<>();
+            String linha = null;
+
+            while ((linha = bufferedReader.readLine()) != null) 
+            {
+                contador = countWords(linha);
+                int tamanho = linha.length();
+                String[] newAtributo = new String[tamanho];
+                newAtributo = linha.split(" ");
+                for(int i = 0; i < contador; i++)
+                {
+                    lista.add(newAtributo[i]);
+                }
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        int totalLinhas = lista.size()/contador;
+        int k = 0;
+
+        // Hora de colocar numa matriz para trabalhar mais facilmente
+        System.out.println("to aki");
+        String [][] listaVariaveis = new String[totalLinhas][contador];
+        for(int i = 0; i < totalLinhas ; i++)
+        {
+            for(int j = 0; j < contador; j++)
+            {
+                listaVariaveis[i][j] = lista.get(k);
+                //System.out.println("Variavel da posicao [" + i + "][" + j + "]: " + listaVariaveis[i][j]);
+                k++;
+            }
+        }
+        int colunaVariavel = 0;
+        for(int j = 0; j < contador; j++)
+        {
+            if(atributo.equals(listaVariaveis[0][j]))
+            {
+                colunaVariavel = j;
+                break;
+            }
+        }
+        List<Integer> conta0 = new ArrayList<>();
+        List<Integer> conta1 = new ArrayList<>();
+        for(int i = 1; i < totalLinhas; i++)
+        {
+            if(listaVariaveis[i][colunaVariavel].equals("0"))
+            {
+                conta0.add(i);
+            }
+            else if(listaVariaveis[i][colunaVariavel].equals("1"))
+            {
+                conta1.add(i);
+            }
+        }
+        System.out.println(conta0.size());
+        String newline = System.getProperty("line.separator");
+        String addTxt0 = "";
+        String addTxt1 = "";
+        for(int i = 0; i < contador; i++)
+        {
+            if (i != (contador-1))
+            {
+                addTxt0 = addTxt0 + listaVariaveis[0][i] + " ";
+                addTxt1 = addTxt1 + listaVariaveis[0][i] + " ";
+            }
+            else
+            {
+                addTxt0 = addTxt0 + listaVariaveis[0][i] + newline;
+                addTxt1 = addTxt1 + listaVariaveis[0][i] + newline;
+            }
+        }
+        for(int i = 0; i < conta0.size(); i++)
+        {
+            // Adicionar no TXT
+            for(int j = 0; j < contador; j++)
+            {
+                if (j != (contador-1))
+                    addTxt0 = addTxt0 + listaVariaveis[conta0.get(i)][j] + " ";
+                else
+                    addTxt0 = addTxt0 + listaVariaveis[conta0.get(i)][j] + newline;
+            }
+        }
+
+        for(int i = 0; i < conta1.size(); i++)
+        {
+            // Adicionar no TXT
+            for(int j = 0; j < contador; j++)
+            {
+                if (j != (contador-1))
+                    addTxt1 = addTxt1 + listaVariaveis[conta1.get(i)][j] + " ";
+                else
+                    addTxt1 = addTxt1 + listaVariaveis[conta1.get(i)][j] + newline;
+            }
+        }
+
+        System.out.println("Isto será adicionado ao primeiro TXT: \n" + addTxt0);
+        System.out.println("Isto será adicionado ao segundo TXT: \n" + addTxt1);
+
+        BufferedWriter writer = null;
+        // Primeira saída (A que contém os 0s)
+        try {
+            //create a temporary file
+            File logFile = new File(saida0);
+
+            writer = new BufferedWriter(new FileWriter(logFile));
+            writer.write(addTxt0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // Close the writer regardless of what happens...
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        // Segunda saída (contém os 1s)
+        try {
+            //create a temporary file
+            File logFile = new File(saida1);
+
+            // This will output the full path where the file will be written to...
+            System.out.println("Os arquivos serão salvos no seguinte diretório: " + logFile.getAbsolutePath());
+
+            writer = new BufferedWriter(new FileWriter(logFile));
+            writer.write(addTxt1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // Close the writer regardless of what happens...
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        double contadorV = 0, contadorF = 0;
+        double qtdInstancias;
+        int separador = 0;
+        String resultado = atributo;
+
+        for(int i = 0; i < lista.size() ; i++)
+        {
+            boolean numerico = true;
+            try{
+                Double num = Double.parseDouble(lista.get(i));
+            }catch (NumberFormatException e){
+                numerico = false;
+            }
+            if(!numerico){
+                separador++;
+            }
+        }
+
+        double contaPai0 = 0, contaPai1 = 0;
+        for(int i = 1; i < totalLinhas; i++)
+        {
+            if(listaVariaveis[i][contador-1].equals("0"))
+            {
+                contaPai0++;
+            }
+            else if(listaVariaveis[i][contador-1].equals("1"))
+            {
+                contaPai1++;
+            }
+            System.out.println("Pai 0: " + contaPai0);
+            System.out.println("Pai 1: " + contaPai1);
+        }
+
+        System.out.println("Quantidade de '1': " + contaPai0 + "\nQuantidade de '0': " + contaPai1);
+        qtdInstancias = contadorV + contadorF;
+        switch(tipoImpureza)
+        {
+        //Calculo Gini
+            case 1:
+            double ganho = 0;
+            double gini = ((1 - (Math.pow( (double)contadorV/qtdInstancias, 2.0) + Math.pow( (double)contadorF/qtdInstancias, 2.0))));    
+            System.out.println("Gini: " + gini);
+            break;
+
+        //Calculo Entropia
+            case 2:
+                double log1 = ((double) (contadorV/qtdInstancias) * (Math.log( (double) (contadorV/qtdInstancias))/ Math.log(2)));
+                double log2 = ((double) (contadorF/qtdInstancias) * (Math.log( (double) (contadorF/qtdInstancias))/ Math.log(2)));
+                double entropia = -(log1 + log2);      
+            System.out.println("Entropia: " + entropia);
+            break;
+
+        //Calculo Erro de Classe
+            case 3:
+                double max = 0;
+                if(contadorV > contadorF){
+                    max = (double) 1 - contadorV/qtdInstancias;
+                }else{
+                    max = (double) 1 - contadorF/qtdInstancias;
+                }
+            System.out.println("Erro de classe: " + max);
+            break;
+
+            default:
+                System.out.println("Erro: Selecione uma medidade de impureza (1 - Gini / 2- Entropia / 3- Erro de Classe");
+                break;
+        }
+        
+        
+    }   
+}

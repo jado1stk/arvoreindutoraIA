@@ -1,0 +1,144 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package projetoia2;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import javareadtextfile.LerArquivo;
+
+/**
+ *
+ * @author ead
+ */
+public class ProjetoIA2 {
+
+    
+
+public static int countWords(String s){
+
+    int wordCount = 0;
+
+    boolean word = false;
+    int endOfLine = s.length() - 1;
+
+    for (int i = 0; i < s.length(); i++) {
+        // if the char is a letter, word = true.
+        if (Character.isLetter(s.charAt(i)) || Character.isDigit(s.charAt(i)) && i != endOfLine) {
+            word = true;
+            // if char isn't a letter and there have been letters before,
+            // counter goes up.
+        } else if (!Character.isLetter(s.charAt(i)) || Character.isDigit(s.charAt(i)) && word) {
+            wordCount++;
+            word = false;
+            // last word of String; if it doesn't end with a non letter, it
+            // wouldn't count without this.
+        } else if (Character.isLetter(s.charAt(i)) || Character.isDigit(s.charAt(i)) && i == endOfLine) {
+            wordCount++;
+        }
+    }
+    return wordCount;
+}
+
+
+
+  
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) throws IOException {
+        
+         
+        // The text file location of your choice
+        String nomeArquivo = "testeArray.txt";
+        List<String> lista = new ArrayList<String>();
+        FileReader fileReader = new FileReader("testeArray.txt");
+         
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        List<String> linhas = new ArrayList<String>();
+        String linha = null;
+        int contador = 0;
+
+        while ((linha = bufferedReader.readLine()) != null) 
+        {
+            contador = countWords(linha);
+            int tamanho = linha.length();
+            String[] atributo = new String[tamanho];
+            atributo = linha.split(" ");
+            for(int i = 0; i < contador; i++){
+            lista.add(atributo[i]);
+            }
+           
+        }
+        /*for(int i = 0; i < lista.size() ; i++){
+            if(i % 2 == 0){
+        System.out.print("" + lista.get(i));
+            }else{
+        System.out.println(" " + lista.get(i));
+            }
+        }*/
+        
+        
+        bufferedReader.close();
+        
+        
+        double contadorV = 0;
+        double contadorF = 0;
+        double qtdInstancias;
+        String teste = "teste5";
+        int separador = 0;
+        
+        for(int i = 0; i < lista.size() ; i++){
+            boolean numerico = true;
+            try{
+                Double num = Double.parseDouble(lista.get(i));
+            }catch (NumberFormatException e){
+                numerico = false;
+            }
+            if(!numerico){
+                separador++;
+            }
+        }
+
+        
+        if(lista.contains(teste)){
+        for(int i = lista.indexOf(teste) + separador; i < lista.size() ; i += separador){
+           int aux = Integer.parseInt(lista.get(i));
+           if(aux == 1){
+           contadorV++;
+           }else{
+            contadorF++;
+             }
+            }
+        }
+            
+        System.out.println("Verdades: " + contadorV + "\nFalso: " + contadorF);
+        qtdInstancias = contadorV + contadorF;
+        
+        
+        int opcao = 1;
+        switch(opcao){
+        //Calculo Gini
+            case 1:
+            double gini = ((1 - (Math.pow( (double)contadorV/qtdInstancias, 2.0) + Math.pow( (double)contadorF/qtdInstancias, 2.0))));    
+            System.out.println("Gini: " + gini);
+            break;
+        
+        //Calculo 
+            
+        }
+       
+    }
+}
+        
+       
+        
+        
+        
+    
+    
